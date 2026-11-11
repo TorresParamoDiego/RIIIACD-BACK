@@ -1,0 +1,177 @@
+{
+  "researchLines": [
+    {
+      "id": "linea-1",
+      "numero": 1,
+      "slug": "algoritmos-modelado-optimizacion",
+      "nombre": "Diseño de algoritmos para modelado y optimización de sistemas complejos",
+      "nombreCorto": "Algoritmos, modelado y optimización",
+      "descripcion": "Aborda el diseño de algoritmos para representar, modelar y optimizar sistemas complejos, con el propósito de apoyar la toma de decisiones mediante métodos computacionales.",
+      "ejes": [
+        "Diseño de algoritmos",
+        "Modelado",
+        "Optimización",
+        "Sistemas complejos"
+      ],
+      "responsableId": "m-ernesto-de-la-cruz-nicolas",
+      "palabrasClave": [
+        "algoritmo",
+        "algoritmos",
+        "modelado",
+        "optimizacion",
+        "sistemas complejos"
+      ]
+    },
+    {
+      "id": "linea-2",
+      "numero": 2,
+      "slug": "ia-ciencia-datos-mundo-real",
+      "nombre": "Inteligencia Artificial y Ciencia de Datos aplicados a problemas del mundo real",
+      "nombreCorto": "IA y ciencia de datos aplicadas",
+      "descripcion": "Orienta las técnicas de inteligencia artificial y ciencia de datos hacia la atención de problemas concretos del entorno social, productivo e institucional.",
+      "ejes": [
+        "Inteligencia artificial",
+        "Ciencia de datos",
+        "Problemas del mundo real"
+      ],
+      "responsableId": "m-norma-ramirez-perez",
+      "palabrasClave": [
+        "mundo real",
+        "aplicados",
+        "aplicada",
+        "problemas reales"
+      ]
+    },
+    {
+      "id": "linea-3",
+      "numero": 3,
+      "slug": "inteligencia-geoespacial",
+      "nombre": "Inteligencia Geoespacial para la Gestión Inteligente del Territorio",
+      "nombreCorto": "Inteligencia geoespacial",
+      "descripcion": "Integra datos geoespaciales con inteligencia artificial para analizar el territorio y apoyar su gestión de manera informada.",
+      "ejes": [
+        "Inteligencia geoespacial",
+        "Gestión del territorio"
+      ],
+      "responsableId": "m-laura-flores-lopez",
+      "palabrasClave": [
+        "geoespacial",
+        "territorio",
+        "territorial",
+        "sig",
+        "gis",
+        "geografic"
+      ]
+    },
+    {
+      "id": "linea-4",
+      "numero": 4,
+      "slug": "etica-gobernanza-ia",
+      "nombre": "Ética, Gobernanza, Transparencia y Evaluación de IA",
+      "nombreCorto": "Ética y gobernanza de la IA",
+      "descripcion": "Atiende las dimensiones éticas, de gobernanza, transparencia y evaluación de los sistemas de inteligencia artificial, para su desarrollo y uso responsables.",
+      "ejes": [
+        "Ética",
+        "Gobernanza",
+        "Transparencia",
+        "Evaluación de IA"
+      ],
+      "responsableId": "m-eddie-clemente-torres",
+      "palabrasClave": [
+        "etica",
+        "gobernanza",
+        "transparencia",
+        "evaluacion de ia",
+        "responsable"
+      ]
+    },
+    {
+      "id": "linea-5",
+      "numero": 5,
+      "slug": "ia-salud-educacion-agricultura",
+      "nombre": "Inteligencia artificial y ciencia de datos en salud, educación y agricultura",
+      "nombreCorto": "IA en salud, educación y agricultura",
+      "descripcion": "Aplica la inteligencia artificial y la ciencia de datos en tres sectores prioritarios: salud, educación y agricultura.",
+      "ejes": [
+        "Salud",
+        "Educación",
+        "Agricultura"
+      ],
+      "responsableId": "m-maria-hernandez-perez",
+      "palabrasClave": [
+        "salud",
+        "educacion",
+        "agricultura",
+        "agricola",
+        "medic"
+      ]
+    }
+  ],
+  "institutions": [
+    {
+      "id": "cenidet",
+      "nombre": "Centro Nacional de Investigación y Desarrollo Tecnológico",
+      "siglas": "CENIDET",
+      "tipo": "centro-investigacion",
+      "esDemostrativo": false
+    }
+  ],
+  "members": [
+    {
+      "id": "m-eddie-clemente-torres",
+      "tratamiento": "Dr.",
+      "nombres": "Eddie Helbert",
+      "apellidos": "Clemente Torres",
+      "nombreCompleto": "Eddie Helbert Clemente Torres",
+      "institucionId": "cenidet",
+      "rol": "Líder de la red",
+      "lineaInvestigacionId": "linea-4",
+      "correoPublico": "eddie.ct@cenidet.tecnm.mx",
+      "esDemostrativo": false
+    },
+    {
+      "id": "m-ernesto-de-la-cruz-nicolas",
+      "tratamiento": "Dr.",
+      "nombres": "Ernesto",
+      "apellidos": "De La Cruz Nicolás",
+      "nombreCompleto": "Ernesto De La Cruz Nicolás",
+      "institucionId": null,
+      "rol": "Responsable de línea",
+      "lineaInvestigacionId": "linea-1",
+      "esDemostrativo": false
+    },
+    {
+      "id": "m-norma-ramirez-perez",
+      "tratamiento": "Dra.",
+      "nombres": "Norma Verónica",
+      "apellidos": "Ramírez Pérez",
+      "nombreCompleto": "Norma Verónica Ramírez Pérez",
+      "institucionId": null,
+      "rol": "Responsable de línea",
+      "lineaInvestigacionId": "linea-2",
+      "esDemostrativo": false
+    },
+    {
+      "id": "m-laura-flores-lopez",
+      "tratamiento": "Dra.",
+      "nombres": "Laura Yasmin",
+      "apellidos": "Flores López",
+      "nombreCompleto": "Laura Yasmin Flores López",
+      "institucionId": null,
+      "rol": "Responsable de línea",
+      "lineaInvestigacionId": "linea-3",
+      "esDemostrativo": false
+    },
+    {
+      "id": "m-maria-hernandez-perez",
+      "tratamiento": "Dra.",
+      "nombres": "María Yasmín",
+      "apellidos": "Hernández Pérez",
+      "nombreCompleto": "María Yasmín Hernández Pérez",
+      "institucionId": null,
+      "rol": "Responsable de línea",
+      "lineaInvestigacionId": "linea-5",
+      "esDemostrativo": false
+    }
+  ]
+}

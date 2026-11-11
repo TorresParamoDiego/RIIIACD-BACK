@@ -1,0 +1,3501 @@
+{
+  "openapi": "3.1.0",
+  "info": {
+    "title": "RIIIACD API",
+    "description": "API del portal de la RIIIACD. Directorio público, actualización de perfiles por enlace único, importación del padrón y cola de aprobación.",
+    "version": "0.1.0"
+  },
+  "paths": {
+    "/members": {
+      "get": {
+        "tags": [
+          "público"
+        ],
+        "summary": "List Members",
+        "operationId": "list_members_members_get",
+        "parameters": [
+          {
+            "name": "q",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string",
+                  "maxLength": 100
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "description": "Busca en nombres y apellidos (sin acentos).",
+              "title": "Q"
+            },
+            "description": "Busca en nombres y apellidos (sin acentos)."
+          },
+          {
+            "name": "institucion",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "maxLength": 80,
+              "description": "Id de institución, 'todas' o 'sin-asignar'.",
+              "default": "todas",
+              "title": "Institucion"
+            },
+            "description": "Id de institución, 'todas' o 'sin-asignar'."
+          },
+          {
+            "name": "linea",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "maxLength": 20,
+              "description": "Id de línea, 'todas' o 'sin-asignar'.",
+              "default": "todas",
+              "title": "Linea"
+            },
+            "description": "Id de línea, 'todas' o 'sin-asignar'."
+          },
+          {
+            "name": "rol",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "maxLength": 120,
+              "default": "todas",
+              "title": "Rol"
+            }
+          },
+          {
+            "name": "orden",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "pattern": "^(apellidos-asc|apellidos-desc|nombres-asc)$",
+              "default": "apellidos-asc",
+              "title": "Orden"
+            }
+          },
+          {
+            "name": "pagina",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "maximum": 10000,
+              "minimum": 1,
+              "default": 1,
+              "title": "Pagina"
+            }
+          },
+          {
+            "name": "porPagina",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "default": 12,
+              "title": "Porpagina"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MemberPage"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/members/{member_id}": {
+      "get": {
+        "tags": [
+          "público"
+        ],
+        "summary": "Get Member",
+        "operationId": "get_member_members__member_id__get",
+        "parameters": [
+          {
+            "name": "member_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Member Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PublicMember"
+                }
+              }
+            }
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Not Found"
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/institutions": {
+      "get": {
+        "tags": [
+          "público"
+        ],
+        "summary": "List Institutions",
+        "operationId": "list_institutions_institutions_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "items": {
+                    "$ref": "#/components/schemas/InstitutionOut"
+                  },
+                  "type": "array",
+                  "title": "Response List Institutions Institutions Get"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/research-lines": {
+      "get": {
+        "tags": [
+          "público"
+        ],
+        "summary": "List Research Lines",
+        "operationId": "list_research_lines_research_lines_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "items": {
+                    "$ref": "#/components/schemas/ResearchLineOut"
+                  },
+                  "type": "array",
+                  "title": "Response List Research Lines Research Lines Get"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/statistics": {
+      "get": {
+        "tags": [
+          "público"
+        ],
+        "summary": "Get Statistics",
+        "operationId": "get_statistics_statistics_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/StatisticsOut"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/contact": {
+      "post": {
+        "tags": [
+          "público"
+        ],
+        "summary": "Contact",
+        "operationId": "contact_contact_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ContactIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "202": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Accepted"
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "Too Many Requests",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/media/photos/{photo_id}": {
+      "get": {
+        "tags": [
+          "público"
+        ],
+        "summary": "Public Photo",
+        "description": "Solo sirve fotografías aprobadas. Las pendientes, rechazadas o reemplazadas responden 404.",
+        "operationId": "public_photo_media_photos__photo_id__get",
+        "parameters": [
+          {
+            "name": "photo_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "title": "Photo Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response"
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Not Found"
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/invitations/{token}": {
+      "get": {
+        "tags": [
+          "integrante"
+        ],
+        "summary": "Get Invitation",
+        "description": "Valida el enlace SIN consumirlo.",
+        "operationId": "get_invitation_invitations__token__get",
+        "parameters": [
+          {
+            "name": "token",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Token"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MemberInvitation"
+                }
+              }
+            }
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Not Found"
+          },
+          "410": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Gone"
+          },
+          "429": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Too Many Requests"
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/invitations/{token}/changes": {
+      "post": {
+        "tags": [
+          "integrante"
+        ],
+        "summary": "Submit Changes",
+        "description": "Envía los cambios a aprobación y CONSUME el enlace.",
+        "operationId": "submit_changes_invitations__token__changes_post",
+        "parameters": [
+          {
+            "name": "token",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Token"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/MemberChangeProposal"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ChangeSubmissionResult"
+                }
+              }
+            }
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Not Found"
+          },
+          "410": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Gone"
+          },
+          "429": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Too Many Requests"
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/invitations/{token}/photo": {
+      "put": {
+        "tags": [
+          "integrante"
+        ],
+        "summary": "Upload Photo",
+        "description": "Sube la fotografía a aprobación. No consume el enlace: hay que enviar después los cambios.",
+        "operationId": "upload_photo_invitations__token__photo_put",
+        "parameters": [
+          {
+            "name": "token",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Token"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "multipart/form-data": {
+              "schema": {
+                "$ref": "#/components/schemas/Body_upload_photo_invitations__token__photo_put"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PhotoUploadResult"
+                }
+              }
+            }
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Not Found"
+          },
+          "410": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Gone"
+          },
+          "429": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Too Many Requests"
+          },
+          "413": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Content Too Large"
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/admin/auth/login": {
+      "post": {
+        "tags": [
+          "administración: sesión"
+        ],
+        "summary": "Login",
+        "operationId": "login_admin_auth_login_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/LoginIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/LoginOut"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "Too Many Requests",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/admin/auth/logout": {
+      "post": {
+        "tags": [
+          "administración: sesión"
+        ],
+        "summary": "Logout",
+        "operationId": "logout_admin_auth_logout_post",
+        "responses": {
+          "204": {
+            "description": "Successful Response"
+          }
+        }
+      }
+    },
+    "/admin/auth/me": {
+      "get": {
+        "tags": [
+          "administración: sesión"
+        ],
+        "summary": "Me",
+        "operationId": "me_admin_auth_me_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AdminUserOut"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/admin/imports": {
+      "post": {
+        "tags": [
+          "administración"
+        ],
+        "summary": "Upload Import",
+        "description": "Sube el Excel y devuelve el informe de revisión. No aplica nada todavía.",
+        "operationId": "upload_import_admin_imports_post",
+        "requestBody": {
+          "content": {
+            "multipart/form-data": {
+              "schema": {
+                "$ref": "#/components/schemas/Body_upload_import_admin_imports_post"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ImportReport"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Conflict",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/admin/imports/{batch_id}": {
+      "get": {
+        "tags": [
+          "administración"
+        ],
+        "summary": "Get Import",
+        "operationId": "get_import_admin_imports__batch_id__get",
+        "parameters": [
+          {
+            "name": "batch_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "title": "Batch Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ImportReport"
+                }
+              }
+            }
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Unauthorized"
+          },
+          "403": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Forbidden"
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Not Found"
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/admin/imports/{batch_id}/confirm": {
+      "post": {
+        "tags": [
+          "administración"
+        ],
+        "summary": "Confirm Import",
+        "description": "Aplica el lote. Recalcula las diferencias con el estado actual antes de aplicarlas.",
+        "operationId": "confirm_import_admin_imports__batch_id__confirm_post",
+        "parameters": [
+          {
+            "name": "batch_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "title": "Batch Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ImportReport"
+                }
+              }
+            }
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Unauthorized"
+          },
+          "403": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Forbidden"
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Not Found"
+          },
+          "409": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Conflict"
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/admin/change-requests": {
+      "get": {
+        "tags": [
+          "administración"
+        ],
+        "summary": "List Change Requests",
+        "operationId": "list_change_requests_admin_change_requests_get",
+        "parameters": [
+          {
+            "name": "estado",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "enum": [
+                "pendiente",
+                "aprobada",
+                "rechazada"
+              ],
+              "type": "string",
+              "default": "pendiente",
+              "title": "Estado"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/ChangeRequestOut"
+                  },
+                  "title": "Response List Change Requests Admin Change Requests Get"
+                }
+              }
+            }
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Unauthorized"
+          },
+          "403": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Forbidden"
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Not Found"
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/admin/change-requests/{request_id}/approve": {
+      "post": {
+        "tags": [
+          "administración"
+        ],
+        "summary": "Approve Change",
+        "description": "Aplica el cambio, lo registra en el historial y bloquea el campo.",
+        "operationId": "approve_change_admin_change_requests__request_id__approve_post",
+        "parameters": [
+          {
+            "name": "request_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "title": "Request Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ChangeRequestOut"
+                }
+              }
+            }
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Unauthorized"
+          },
+          "403": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Forbidden"
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Not Found"
+          },
+          "409": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Conflict"
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/admin/change-requests/{request_id}/reject": {
+      "post": {
+        "tags": [
+          "administración"
+        ],
+        "summary": "Reject Change",
+        "operationId": "reject_change_admin_change_requests__request_id__reject_post",
+        "parameters": [
+          {
+            "name": "request_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "title": "Request Id"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/RejectIn"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ChangeRequestOut"
+                }
+              }
+            }
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Unauthorized"
+          },
+          "403": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Forbidden"
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Not Found"
+          },
+          "409": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Conflict"
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/admin/photos/{photo_id}": {
+      "get": {
+        "tags": [
+          "administración"
+        ],
+        "summary": "Admin Photo",
+        "description": "Vista previa de cualquier fotografía (también pendientes) para revisarla.",
+        "operationId": "admin_photo_admin_photos__photo_id__get",
+        "parameters": [
+          {
+            "name": "photo_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "title": "Photo Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response"
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Unauthorized"
+          },
+          "403": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Forbidden"
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Not Found"
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/admin/invitations": {
+      "post": {
+        "tags": [
+          "administración"
+        ],
+        "summary": "Create Invitation",
+        "description": "Genera un enlace de 24 horas. Con envio=smtp intenta enviarlo; si no sale, se devuelve para compartirlo.",
+        "operationId": "create_invitation_admin_invitations_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/InvitationIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/InvitationOut"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/admin/members": {
+      "get": {
+        "tags": [
+          "administración"
+        ],
+        "summary": "List Admin Members",
+        "operationId": "list_admin_members_admin_members_get",
+        "parameters": [
+          {
+            "name": "q",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string",
+                  "maxLength": 100
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Q"
+            }
+          },
+          {
+            "name": "activo",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "boolean"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Activo"
+            }
+          },
+          {
+            "name": "pagina",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "default": 1,
+              "title": "Pagina"
+            }
+          },
+          {
+            "name": "porPagina",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "maximum": 200,
+              "minimum": 1,
+              "default": 50,
+              "title": "Porpagina"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MemberAdminList"
+                }
+              }
+            }
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Unauthorized"
+          },
+          "403": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Forbidden"
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Not Found"
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/admin/members/{slug}": {
+      "get": {
+        "tags": [
+          "administración"
+        ],
+        "summary": "Get Admin Member",
+        "operationId": "get_admin_member_admin_members__slug__get",
+        "parameters": [
+          {
+            "name": "slug",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Slug"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MemberAdminOut"
+                }
+              }
+            }
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Unauthorized"
+          },
+          "403": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Forbidden"
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Not Found"
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      },
+      "patch": {
+        "tags": [
+          "administración"
+        ],
+        "summary": "Patch Member",
+        "description": "Edición directa con historial. Los campos editados quedan bloqueados frente a importaciones.",
+        "operationId": "patch_member_admin_members__slug__patch",
+        "parameters": [
+          {
+            "name": "slug",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Slug"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/MemberPatch"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MemberAdminOut"
+                }
+              }
+            }
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Unauthorized"
+          },
+          "403": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Forbidden"
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Not Found"
+          },
+          "409": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Conflict"
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/admin/members/{slug}/history": {
+      "get": {
+        "tags": [
+          "administración"
+        ],
+        "summary": "Member History",
+        "operationId": "member_history_admin_members__slug__history_get",
+        "parameters": [
+          {
+            "name": "slug",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Slug"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "additionalProperties": true
+                  },
+                  "title": "Response Member History Admin Members  Slug  History Get"
+                }
+              }
+            }
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Unauthorized"
+          },
+          "403": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Forbidden"
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Not Found"
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "Accepted": {
+        "properties": {
+          "recibido": {
+            "type": "boolean",
+            "title": "Recibido",
+            "default": true
+          }
+        },
+        "type": "object",
+        "title": "Accepted"
+      },
+      "AdminUserOut": {
+        "properties": {
+          "id": {
+            "type": "string",
+            "title": "Id"
+          },
+          "correo": {
+            "type": "string",
+            "title": "Correo"
+          },
+          "nombre": {
+            "type": "string",
+            "title": "Nombre"
+          },
+          "rol": {
+            "type": "string",
+            "title": "Rol"
+          },
+          "permisos": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "Permisos"
+          }
+        },
+        "type": "object",
+        "required": [
+          "id",
+          "correo",
+          "nombre",
+          "rol",
+          "permisos"
+        ],
+        "title": "AdminUserOut"
+      },
+      "Body_upload_import_admin_imports_post": {
+        "properties": {
+          "archivo": {
+            "type": "string",
+            "contentMediaType": "application/octet-stream",
+            "title": "Archivo",
+            "description": "Excel (.xlsx) de integrantes"
+          }
+        },
+        "type": "object",
+        "required": [
+          "archivo"
+        ],
+        "title": "Body_upload_import_admin_imports_post"
+      },
+      "Body_upload_photo_invitations__token__photo_put": {
+        "properties": {
+          "foto": {
+            "type": "string",
+            "contentMediaType": "application/octet-stream",
+            "title": "Foto"
+          }
+        },
+        "type": "object",
+        "required": [
+          "foto"
+        ],
+        "title": "Body_upload_photo_invitations__token__photo_put"
+      },
+      "ChangeRequestOut": {
+        "properties": {
+          "id": {
+            "type": "string",
+            "title": "Id"
+          },
+          "integranteId": {
+            "type": "string",
+            "title": "Integranteid"
+          },
+          "integranteNombre": {
+            "type": "string",
+            "title": "Integrantenombre"
+          },
+          "campo": {
+            "type": "string",
+            "title": "Campo"
+          },
+          "valorAnterior": {
+            "title": "Valoranterior"
+          },
+          "valorPropuesto": {
+            "title": "Valorpropuesto"
+          },
+          "estado": {
+            "type": "string",
+            "title": "Estado"
+          },
+          "motivoRechazo": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Motivorechazo"
+          },
+          "creadoEn": {
+            "type": "string",
+            "format": "date-time",
+            "title": "Creadoen"
+          },
+          "revisadoEn": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "date-time"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Revisadoen"
+          },
+          "fotoUrlAdmin": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Fotourladmin"
+          }
+        },
+        "type": "object",
+        "required": [
+          "id",
+          "integranteId",
+          "integranteNombre",
+          "campo",
+          "estado",
+          "creadoEn"
+        ],
+        "title": "ChangeRequestOut"
+      },
+      "ChangeSubmissionResult": {
+        "properties": {
+          "solicitudesCreadas": {
+            "type": "integer",
+            "title": "Solicitudescreadas"
+          }
+        },
+        "type": "object",
+        "required": [
+          "solicitudesCreadas"
+        ],
+        "title": "ChangeSubmissionResult"
+      },
+      "ConsentText": {
+        "properties": {
+          "version": {
+            "type": "string",
+            "title": "Version"
+          },
+          "texto": {
+            "type": "string",
+            "title": "Texto"
+          }
+        },
+        "type": "object",
+        "required": [
+          "version",
+          "texto"
+        ],
+        "title": "ConsentText"
+      },
+      "ContactIn": {
+        "properties": {
+          "nombre": {
+            "type": "string",
+            "maxLength": 200,
+            "minLength": 3,
+            "title": "Nombre"
+          },
+          "correo": {
+            "type": "string",
+            "format": "email",
+            "title": "Correo"
+          },
+          "asunto": {
+            "type": "string",
+            "maxLength": 200,
+            "minLength": 4,
+            "title": "Asunto"
+          },
+          "mensaje": {
+            "type": "string",
+            "maxLength": 2000,
+            "minLength": 20,
+            "title": "Mensaje"
+          },
+          "sitioWeb": {
+            "anyOf": [
+              {
+                "type": "string",
+                "maxLength": 200
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Sitioweb",
+            "description": "Campo trampa anti-spam: debe llegar vacío (oculto en el formulario)."
+          }
+        },
+        "type": "object",
+        "required": [
+          "nombre",
+          "correo",
+          "asunto",
+          "mensaje"
+        ],
+        "title": "ContactIn"
+      },
+      "EditableProfile": {
+        "properties": {
+          "biografia": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Biografia"
+          },
+          "perfilProfesional": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Perfilprofesional"
+          },
+          "lineaInvestigacionId": {
+            "anyOf": [
+              {
+                "type": "string",
+                "enum": [
+                  "linea-1",
+                  "linea-2",
+                  "linea-3",
+                  "linea-4",
+                  "linea-5"
+                ]
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Lineainvestigacionid"
+          },
+          "lineasPropuestas": {
+            "items": {
+              "type": "string",
+              "enum": [
+                "linea-1",
+                "linea-2",
+                "linea-3",
+                "linea-4",
+                "linea-5"
+              ]
+            },
+            "type": "array",
+            "title": "Lineaspropuestas"
+          },
+          "correoPublicoAutorizado": {
+            "type": "boolean",
+            "title": "Correopublicoautorizado"
+          },
+          "fotoUrl": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Fotourl"
+          }
+        },
+        "type": "object",
+        "required": [
+          "biografia",
+          "perfilProfesional",
+          "lineaInvestigacionId",
+          "lineasPropuestas",
+          "correoPublicoAutorizado",
+          "fotoUrl"
+        ],
+        "title": "EditableProfile"
+      },
+      "ErrorDetail": {
+        "properties": {
+          "codigo": {
+            "type": "string",
+            "title": "Codigo"
+          },
+          "mensaje": {
+            "type": "string",
+            "title": "Mensaje"
+          }
+        },
+        "type": "object",
+        "required": [
+          "codigo",
+          "mensaje"
+        ],
+        "title": "ErrorDetail"
+      },
+      "ErrorResponse": {
+        "properties": {
+          "detail": {
+            "$ref": "#/components/schemas/ErrorDetail"
+          }
+        },
+        "type": "object",
+        "required": [
+          "detail"
+        ],
+        "title": "ErrorResponse"
+      },
+      "HTTPValidationError": {
+        "properties": {
+          "detail": {
+            "items": {
+              "$ref": "#/components/schemas/ValidationError"
+            },
+            "type": "array",
+            "title": "Detail"
+          }
+        },
+        "type": "object",
+        "title": "HTTPValidationError"
+      },
+      "ImportDiff": {
+        "properties": {
+          "campo": {
+            "type": "string",
+            "title": "Campo"
+          },
+          "anterior": {
+            "title": "Anterior"
+          },
+          "nuevo": {
+            "title": "Nuevo"
+          },
+          "bloqueado": {
+            "type": "boolean",
+            "title": "Bloqueado",
+            "default": false
+          }
+        },
+        "type": "object",
+        "required": [
+          "campo"
+        ],
+        "title": "ImportDiff"
+      },
+      "ImportReport": {
+        "properties": {
+          "id": {
+            "type": "string",
+            "title": "Id"
+          },
+          "estado": {
+            "type": "string",
+            "enum": [
+              "revision",
+              "aplicado",
+              "descartado"
+            ],
+            "title": "Estado"
+          },
+          "nombreArchivo": {
+            "type": "string",
+            "title": "Nombrearchivo"
+          },
+          "archivoHash": {
+            "type": "string",
+            "title": "Archivohash"
+          },
+          "creadoEn": {
+            "type": "string",
+            "format": "date-time",
+            "title": "Creadoen"
+          },
+          "aplicadoEn": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "date-time"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Aplicadoen"
+          },
+          "resumen": {
+            "additionalProperties": true,
+            "type": "object",
+            "title": "Resumen"
+          },
+          "filas": {
+            "items": {
+              "$ref": "#/components/schemas/ImportRowOut"
+            },
+            "type": "array",
+            "title": "Filas"
+          }
+        },
+        "type": "object",
+        "required": [
+          "id",
+          "estado",
+          "nombreArchivo",
+          "archivoHash",
+          "creadoEn",
+          "resumen",
+          "filas"
+        ],
+        "title": "ImportReport"
+      },
+      "ImportRowOut": {
+        "properties": {
+          "fila": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Fila"
+          },
+          "resultado": {
+            "type": "string",
+            "enum": [
+              "nuevo",
+              "cambiado",
+              "sin_cambios",
+              "duplicado",
+              "desactivado",
+              "omitido"
+            ],
+            "title": "Resultado"
+          },
+          "integranteId": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Integranteid"
+          },
+          "nombre": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Nombre"
+          },
+          "coincidencia": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Coincidencia"
+          },
+          "diferencias": {
+            "items": {
+              "$ref": "#/components/schemas/ImportDiff"
+            },
+            "type": "array",
+            "title": "Diferencias",
+            "default": []
+          },
+          "advertencias": {
+            "items": {
+              "$ref": "#/components/schemas/ImportWarning"
+            },
+            "type": "array",
+            "title": "Advertencias",
+            "default": []
+          }
+        },
+        "type": "object",
+        "required": [
+          "fila",
+          "resultado"
+        ],
+        "title": "ImportRowOut"
+      },
+      "ImportWarning": {
+        "properties": {
+          "codigo": {
+            "type": "string",
+            "title": "Codigo"
+          },
+          "mensaje": {
+            "type": "string",
+            "title": "Mensaje"
+          },
+          "campo": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Campo"
+          }
+        },
+        "type": "object",
+        "required": [
+          "codigo",
+          "mensaje"
+        ],
+        "title": "ImportWarning"
+      },
+      "InstitutionOut": {
+        "properties": {
+          "id": {
+            "type": "string",
+            "title": "Id"
+          },
+          "nombre": {
+            "type": "string",
+            "title": "Nombre"
+          },
+          "siglas": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Siglas"
+          },
+          "tipo": {
+            "type": "string",
+            "enum": [
+              "tecnologico",
+              "centro-investigacion",
+              "universidad"
+            ],
+            "title": "Tipo"
+          },
+          "logoUrl": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Logourl"
+          },
+          "esDemostrativo": {
+            "type": "boolean",
+            "title": "Esdemostrativo",
+            "default": false
+          }
+        },
+        "type": "object",
+        "required": [
+          "id",
+          "nombre",
+          "tipo"
+        ],
+        "title": "InstitutionOut"
+      },
+      "InstitutionsByType": {
+        "properties": {
+          "tecnologico": {
+            "type": "integer",
+            "title": "Tecnologico"
+          },
+          "centro-investigacion": {
+            "type": "integer",
+            "title": "Centro-Investigacion"
+          },
+          "universidad": {
+            "type": "integer",
+            "title": "Universidad"
+          }
+        },
+        "type": "object",
+        "required": [
+          "tecnologico",
+          "centro-investigacion",
+          "universidad"
+        ],
+        "title": "InstitutionsByType"
+      },
+      "InvitationIn": {
+        "properties": {
+          "integranteId": {
+            "type": "string",
+            "title": "Integranteid",
+            "description": "Slug público del integrante."
+          },
+          "envio": {
+            "type": "string",
+            "enum": [
+              "smtp",
+              "manual"
+            ],
+            "title": "Envio",
+            "default": "manual"
+          }
+        },
+        "type": "object",
+        "required": [
+          "integranteId"
+        ],
+        "title": "InvitationIn"
+      },
+      "InvitationMember": {
+        "properties": {
+          "id": {
+            "type": "string",
+            "title": "Id"
+          },
+          "nombreCompleto": {
+            "type": "string",
+            "title": "Nombrecompleto"
+          },
+          "correoInstitucionalEnmascarado": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Correoinstitucionalenmascarado"
+          }
+        },
+        "type": "object",
+        "required": [
+          "id",
+          "nombreCompleto",
+          "correoInstitucionalEnmascarado"
+        ],
+        "title": "InvitationMember"
+      },
+      "InvitationOut": {
+        "properties": {
+          "invitacionId": {
+            "type": "string",
+            "title": "Invitacionid"
+          },
+          "expiraEn": {
+            "type": "string",
+            "format": "date-time",
+            "title": "Expiraen"
+          },
+          "enviado": {
+            "type": "boolean",
+            "title": "Enviado"
+          },
+          "enlace": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Enlace",
+            "description": "Se devuelve cuando el envío es manual o el correo no salió."
+          },
+          "motivoNoEnviado": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Motivonoenviado"
+          }
+        },
+        "type": "object",
+        "required": [
+          "invitacionId",
+          "expiraEn",
+          "enviado"
+        ],
+        "title": "InvitationOut"
+      },
+      "LoginIn": {
+        "properties": {
+          "correo": {
+            "type": "string",
+            "format": "email",
+            "title": "Correo"
+          },
+          "contrasena": {
+            "type": "string",
+            "maxLength": 200,
+            "minLength": 1,
+            "title": "Contrasena"
+          }
+        },
+        "type": "object",
+        "required": [
+          "correo",
+          "contrasena"
+        ],
+        "title": "LoginIn"
+      },
+      "LoginOut": {
+        "properties": {
+          "usuario": {
+            "$ref": "#/components/schemas/AdminUserOut"
+          },
+          "csrfToken": {
+            "type": "string",
+            "title": "Csrftoken",
+            "description": "Enviar en el encabezado X-CSRF-Token en cada POST/PUT/PATCH/DELETE."
+          }
+        },
+        "type": "object",
+        "required": [
+          "usuario",
+          "csrfToken"
+        ],
+        "title": "LoginOut"
+      },
+      "MemberAdminList": {
+        "properties": {
+          "items": {
+            "items": {
+              "$ref": "#/components/schemas/MemberAdminOut"
+            },
+            "type": "array",
+            "title": "Items"
+          },
+          "total": {
+            "type": "integer",
+            "title": "Total"
+          }
+        },
+        "type": "object",
+        "required": [
+          "items",
+          "total"
+        ],
+        "title": "MemberAdminList"
+      },
+      "MemberAdminOut": {
+        "properties": {
+          "id": {
+            "type": "string",
+            "title": "Id"
+          },
+          "slug": {
+            "type": "string",
+            "title": "Slug"
+          },
+          "numero": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Numero"
+          },
+          "tratamiento": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Tratamiento"
+          },
+          "nombres": {
+            "type": "string",
+            "title": "Nombres"
+          },
+          "apellidos": {
+            "type": "string",
+            "title": "Apellidos"
+          },
+          "cvuTecnm": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Cvutecnm"
+          },
+          "cvuConahcyt": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Cvuconahcyt"
+          },
+          "correoInstitucional": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Correoinstitucional"
+          },
+          "telefonoParticular": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Telefonoparticular"
+          },
+          "correoPersonal": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Correopersonal"
+          },
+          "institucionTexto": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Instituciontexto"
+          },
+          "institucionId": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Institucionid"
+          },
+          "rol": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Rol"
+          },
+          "lineaInvestigacionTexto": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Lineainvestigaciontexto"
+          },
+          "lineaInvestigacionId": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Lineainvestigacionid"
+          },
+          "scopusAuthorId": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Scopusauthorid"
+          },
+          "archivoCvuTecnm": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Archivocvutecnm"
+          },
+          "archivoCvuConahcyt": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Archivocvuconahcyt"
+          },
+          "archivoCartaCompromiso": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Archivocartacompromiso"
+          },
+          "activo": {
+            "type": "boolean",
+            "title": "Activo"
+          },
+          "esPublico": {
+            "type": "boolean",
+            "title": "Espublico"
+          },
+          "biografia": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Biografia"
+          },
+          "perfilProfesional": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Perfilprofesional"
+          },
+          "lineasPropuestas": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "Lineaspropuestas",
+            "default": []
+          },
+          "camposBloqueados": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "Camposbloqueados",
+            "default": []
+          }
+        },
+        "type": "object",
+        "required": [
+          "id",
+          "slug",
+          "numero",
+          "tratamiento",
+          "nombres",
+          "apellidos",
+          "cvuTecnm",
+          "cvuConahcyt",
+          "correoInstitucional",
+          "telefonoParticular",
+          "correoPersonal",
+          "institucionTexto",
+          "institucionId",
+          "rol",
+          "lineaInvestigacionTexto",
+          "lineaInvestigacionId",
+          "scopusAuthorId",
+          "archivoCvuTecnm",
+          "archivoCvuConahcyt",
+          "archivoCartaCompromiso",
+          "activo",
+          "esPublico"
+        ],
+        "title": "MemberAdminOut"
+      },
+      "MemberChangeProposal": {
+        "properties": {
+          "biografia": {
+            "anyOf": [
+              {
+                "type": "string",
+                "maxLength": 1000
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Biografia"
+          },
+          "perfilProfesional": {
+            "anyOf": [
+              {
+                "type": "string",
+                "maxLength": 500
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Perfilprofesional"
+          },
+          "lineasPropuestas": {
+            "anyOf": [
+              {
+                "items": {
+                  "type": "string",
+                  "enum": [
+                    "linea-1",
+                    "linea-2",
+                    "linea-3",
+                    "linea-4",
+                    "linea-5"
+                  ]
+                },
+                "type": "array",
+                "maxItems": 5
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Lineaspropuestas"
+          },
+          "solicitaCorreoPublico": {
+            "anyOf": [
+              {
+                "type": "boolean"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Solicitacorreopublico"
+          },
+          "versionTextoConsentimiento": {
+            "anyOf": [
+              {
+                "type": "string",
+                "maxLength": 40
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Versiontextoconsentimiento"
+          }
+        },
+        "type": "object",
+        "title": "MemberChangeProposal",
+        "description": "Solo se envían los campos que cambiaron. `null` vacía el campo."
+      },
+      "MemberInvitation": {
+        "properties": {
+          "integrante": {
+            "$ref": "#/components/schemas/InvitationMember"
+          },
+          "expiraEn": {
+            "type": "string",
+            "title": "Expiraen"
+          },
+          "perfil": {
+            "$ref": "#/components/schemas/EditableProfile"
+          },
+          "textoConsentimiento": {
+            "$ref": "#/components/schemas/ConsentText"
+          },
+          "foto": {
+            "$ref": "#/components/schemas/PhotoRules"
+          }
+        },
+        "type": "object",
+        "required": [
+          "integrante",
+          "expiraEn",
+          "perfil",
+          "textoConsentimiento",
+          "foto"
+        ],
+        "title": "MemberInvitation"
+      },
+      "MemberPage": {
+        "properties": {
+          "items": {
+            "items": {
+              "$ref": "#/components/schemas/PublicMember"
+            },
+            "type": "array",
+            "title": "Items"
+          },
+          "total": {
+            "type": "integer",
+            "title": "Total"
+          },
+          "pagina": {
+            "type": "integer",
+            "title": "Pagina"
+          },
+          "porPagina": {
+            "type": "integer",
+            "title": "Porpagina"
+          },
+          "totalPaginas": {
+            "type": "integer",
+            "title": "Totalpaginas"
+          }
+        },
+        "type": "object",
+        "required": [
+          "items",
+          "total",
+          "pagina",
+          "porPagina",
+          "totalPaginas"
+        ],
+        "title": "MemberPage"
+      },
+      "MemberPatch": {
+        "properties": {
+          "tratamiento": {
+            "anyOf": [
+              {
+                "type": "string",
+                "enum": [
+                  "Dr.",
+                  "Dra.",
+                  "Mtro.",
+                  "Mtra.",
+                  "Ing.",
+                  "Lic."
+                ]
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Tratamiento"
+          },
+          "nombres": {
+            "anyOf": [
+              {
+                "type": "string",
+                "maxLength": 200,
+                "minLength": 1
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Nombres"
+          },
+          "apellidos": {
+            "anyOf": [
+              {
+                "type": "string",
+                "maxLength": 200,
+                "minLength": 1
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Apellidos"
+          },
+          "cvuTecnm": {
+            "anyOf": [
+              {
+                "type": "string",
+                "maxLength": 40,
+                "pattern": "^\\d+$"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Cvutecnm"
+          },
+          "cvuConahcyt": {
+            "anyOf": [
+              {
+                "type": "string",
+                "maxLength": 40,
+                "pattern": "^\\d+$"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Cvuconahcyt"
+          },
+          "correoInstitucional": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "email"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Correoinstitucional"
+          },
+          "telefonoParticular": {
+            "anyOf": [
+              {
+                "type": "string",
+                "maxLength": 40
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Telefonoparticular"
+          },
+          "correoPersonal": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "email"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Correopersonal"
+          },
+          "institucionId": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Institucionid"
+          },
+          "rol": {
+            "anyOf": [
+              {
+                "type": "string",
+                "maxLength": 120
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Rol"
+          },
+          "lineaInvestigacionId": {
+            "anyOf": [
+              {
+                "type": "string",
+                "enum": [
+                  "linea-1",
+                  "linea-2",
+                  "linea-3",
+                  "linea-4",
+                  "linea-5"
+                ]
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Lineainvestigacionid"
+          },
+          "scopusAuthorId": {
+            "anyOf": [
+              {
+                "type": "string",
+                "maxLength": 40
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Scopusauthorid"
+          },
+          "activo": {
+            "anyOf": [
+              {
+                "type": "boolean"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Activo"
+          },
+          "esPublico": {
+            "anyOf": [
+              {
+                "type": "boolean"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Espublico"
+          },
+          "biografia": {
+            "anyOf": [
+              {
+                "type": "string",
+                "maxLength": 1000
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Biografia"
+          },
+          "perfilProfesional": {
+            "anyOf": [
+              {
+                "type": "string",
+                "maxLength": 500
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Perfilprofesional"
+          },
+          "lineasPropuestas": {
+            "anyOf": [
+              {
+                "items": {
+                  "type": "string",
+                  "enum": [
+                    "linea-1",
+                    "linea-2",
+                    "linea-3",
+                    "linea-4",
+                    "linea-5"
+                  ]
+                },
+                "type": "array"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Lineaspropuestas"
+          }
+        },
+        "type": "object",
+        "title": "MemberPatch",
+        "description": "Edición directa. Cada campo enviado queda en el historial y se bloquea frente a importaciones."
+      },
+      "PhotoRules": {
+        "properties": {
+          "formatos": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "Formatos"
+          },
+          "tamanoMaximoBytes": {
+            "type": "integer",
+            "title": "Tamanomaximobytes"
+          }
+        },
+        "type": "object",
+        "required": [
+          "formatos",
+          "tamanoMaximoBytes"
+        ],
+        "title": "PhotoRules"
+      },
+      "PhotoUploadResult": {
+        "properties": {
+          "fotoId": {
+            "type": "string",
+            "title": "Fotoid"
+          },
+          "estado": {
+            "type": "string",
+            "title": "Estado"
+          }
+        },
+        "type": "object",
+        "required": [
+          "fotoId",
+          "estado"
+        ],
+        "title": "PhotoUploadResult"
+      },
+      "PublicMember": {
+        "properties": {
+          "id": {
+            "type": "string",
+            "title": "Id"
+          },
+          "tratamiento": {
+            "anyOf": [
+              {
+                "type": "string",
+                "enum": [
+                  "Dr.",
+                  "Dra.",
+                  "Mtro.",
+                  "Mtra.",
+                  "Ing.",
+                  "Lic."
+                ]
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Tratamiento"
+          },
+          "nombres": {
+            "type": "string",
+            "title": "Nombres"
+          },
+          "apellidos": {
+            "type": "string",
+            "title": "Apellidos"
+          },
+          "nombreCompleto": {
+            "type": "string",
+            "title": "Nombrecompleto"
+          },
+          "institucionId": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Institucionid"
+          },
+          "rol": {
+            "type": "string",
+            "title": "Rol"
+          },
+          "lineaInvestigacionId": {
+            "anyOf": [
+              {
+                "type": "string",
+                "enum": [
+                  "linea-1",
+                  "linea-2",
+                  "linea-3",
+                  "linea-4",
+                  "linea-5"
+                ]
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Lineainvestigacionid"
+          },
+          "correoPublico": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Correopublico",
+            "description": "Solo con una autorización aprobada y vigente."
+          },
+          "biografia": {
+            "anyOf": [
+              {
+                "type": "string",
+                "maxLength": 1000
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Biografia"
+          },
+          "perfilProfesional": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Perfilprofesional"
+          },
+          "lineasPropuestas": {
+            "items": {
+              "type": "string",
+              "enum": [
+                "linea-1",
+                "linea-2",
+                "linea-3",
+                "linea-4",
+                "linea-5"
+              ]
+            },
+            "type": "array",
+            "title": "Lineaspropuestas",
+            "default": []
+          },
+          "fotoUrl": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Fotourl"
+          },
+          "perfilAcademicoUrl": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Perfilacademicourl"
+          },
+          "esDemostrativo": {
+            "type": "boolean",
+            "title": "Esdemostrativo",
+            "default": false
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "id",
+          "nombres",
+          "apellidos",
+          "nombreCompleto",
+          "institucionId",
+          "rol",
+          "lineaInvestigacionId"
+        ],
+        "title": "PublicMember"
+      },
+      "RejectIn": {
+        "properties": {
+          "motivo": {
+            "type": "string",
+            "maxLength": 1000,
+            "minLength": 3,
+            "title": "Motivo"
+          }
+        },
+        "type": "object",
+        "required": [
+          "motivo"
+        ],
+        "title": "RejectIn"
+      },
+      "ResearchLineOut": {
+        "properties": {
+          "id": {
+            "type": "string",
+            "enum": [
+              "linea-1",
+              "linea-2",
+              "linea-3",
+              "linea-4",
+              "linea-5"
+            ],
+            "title": "Id"
+          },
+          "numero": {
+            "type": "integer",
+            "title": "Numero"
+          },
+          "slug": {
+            "type": "string",
+            "title": "Slug"
+          },
+          "nombre": {
+            "type": "string",
+            "title": "Nombre"
+          },
+          "nombreCorto": {
+            "type": "string",
+            "title": "Nombrecorto"
+          },
+          "descripcion": {
+            "type": "string",
+            "title": "Descripcion"
+          },
+          "ejes": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "Ejes"
+          },
+          "responsableId": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Responsableid"
+          },
+          "palabrasClave": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "Palabrasclave"
+          }
+        },
+        "type": "object",
+        "required": [
+          "id",
+          "numero",
+          "slug",
+          "nombre",
+          "nombreCorto",
+          "descripcion",
+          "ejes",
+          "responsableId",
+          "palabrasClave"
+        ],
+        "title": "ResearchLineOut"
+      },
+      "StatisticsOut": {
+        "properties": {
+          "integrantes": {
+            "type": "integer",
+            "title": "Integrantes"
+          },
+          "instituciones": {
+            "type": "integer",
+            "title": "Instituciones"
+          },
+          "institucionesPorTipo": {
+            "$ref": "#/components/schemas/InstitutionsByType"
+          },
+          "fechaCorte": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Fechacorte"
+          }
+        },
+        "type": "object",
+        "required": [
+          "integrantes",
+          "instituciones",
+          "institucionesPorTipo"
+        ],
+        "title": "StatisticsOut"
+      },
+      "ValidationError": {
+        "properties": {
+          "loc": {
+            "items": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "integer"
+                }
+              ]
+            },
+            "type": "array",
+            "title": "Location"
+          },
+          "msg": {
+            "type": "string",
+            "title": "Message"
+          },
+          "type": {
+            "type": "string",
+            "title": "Error Type"
+          },
+          "input": {
+            "title": "Input"
+          },
+          "ctx": {
+            "type": "object",
+            "title": "Context"
+          }
+        },
+        "type": "object",
+        "required": [
+          "loc",
+          "msg",
+          "type"
+        ],
+        "title": "ValidationError"
+      }
+    }
+  }
+}

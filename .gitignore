@@ -1,0 +1,15 @@
+.venv/
+__pycache__/
+*.pyc
+.env
+.pytest_cache/
+.ruff_cache/
+.mypy_cache/
+media/
+*.egg-info/
+
+# Datos personales: el Excel original nunca se versiona (brief 4.5)
+*.xlsx
+*.xls
+*.csv
+*.ods

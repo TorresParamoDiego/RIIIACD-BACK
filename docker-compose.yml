@@ -1,0 +1,28 @@
+# Entorno local completo: PostgreSQL 16 + API. Uso: docker compose up --build
+services:
+  db:
+    image: postgres:16
+    environment:
+      POSTGRES_DB: riiiacd
+      POSTGRES_USER: riiiacd
+      POSTGRES_PASSWORD: riiiacd-local
+    volumes: [pgdata:/var/lib/postgresql/data]
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U riiiacd"]
+      interval: 5s
+      retries: 10
+  api:
+    build: .
+    depends_on:
+      db: { condition: service_healthy }
+    environment:
+      DATABASE_URL: postgresql+psycopg://riiiacd:riiiacd-local@db:5432/riiiacd
+      SECRET_KEY: solo-para-desarrollo-local-0123456789
+      SESSION_COOKIE_SECURE: "false"
+      PUBLIC_SITE_URL: http://localhost:5173
+      API_PUBLIC_URL: http://localhost:8000
+    ports: ["8000:8000"]
+    volumes: [media:/app/media]
+volumes:
+  pgdata:
+  media:
